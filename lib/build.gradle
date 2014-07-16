@@ -3,7 +3,10 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 //apply from: '../.publishing/sonatype.gradle'
 
-archivesBaseName = 'android-crop'
+def archivesBaseName = 'android-crop'
+def groupId = 'com.soundcloud.android'
+// プロジェクトルート配下のrepositoryディレクトリにデプロイする
+def deployTo = new File(rootDir, "public/repository")
 
 android {
     compileSdkVersion 19
@@ -18,6 +21,17 @@ android {
     }
 }
 
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository url: "file://${deployTo.absolutePath}" // デプロイ先
+            pom.version = project.VERSION // ライブラリバージョン
+            pom.groupId = groupId // グループ名
+            pom.artifactId = archivesBaseName // アーティファクト名
+        }
+    }
+}
+
 dependencies {
     androidTestCompile 'com.squareup:fest-android:1.0.7'
     androidTestCompile 'com.android.support:support-v4:19.1.0'
@@ -25,4 +39,5 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker:1.0'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
 }
+
 
